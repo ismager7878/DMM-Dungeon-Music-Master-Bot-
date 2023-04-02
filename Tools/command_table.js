@@ -1,5 +1,5 @@
-const {pause, play, unpause, stop} = require('../commands/basic_controlls.js')
-const {add, queue, skip, play_playlist, add_playlist, clear, shuffle} = require('../commands/playlist.js');
+import {pause, play, unpause, stop} from '../commands/basic_controlls.js'
+import {add, queue, skip, playPlaylist, addPlaylist, clear, shuffle} from '../commands/playlist.js';
 
 const command_table = [
     pause,

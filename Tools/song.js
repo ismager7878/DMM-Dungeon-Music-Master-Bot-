@@ -1,5 +1,5 @@
-const ytdl = require("ytdl-core");
-const { createAudioResource } = require("@discordjs/voice");
+import ytdl from "ytdl-core";
+import { createAudioResource } from "@discordjs/voice";
 
 class Song {
     constructor(url) {
@@ -12,7 +12,6 @@ class Song {
             fmt: "mp3",
             highWaterMark: 1 << 62,
             liveBuffer: 1 << 62,
-
             dlChunkSize: 0,
             bitrate: 128,
             quality: "highestaudio",

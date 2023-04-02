@@ -1,9 +1,8 @@
 
-const {Song} = require('../Tools/song.js')
-const {joinVoiceChannel} = require('@discordjs/voice')
-const { ytsearch } = require('../Tools/search.js')
-const { AudioPlayerStatus } = require("@discordjs/voice")
-const { SlashCommandBuilder } = require('discord.js')
+import {Song} from "../Tools/song.js";
+import {joinVoiceChannel} from '@discordjs/voice';
+import { ytsearch } from "../Tools/search.js";
+import { AudioPlayerStatus } from "@discordjs/voice";
 
 const pause = {
     data: new SlashCommandBuilder()

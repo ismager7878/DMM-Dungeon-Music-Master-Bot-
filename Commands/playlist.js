@@ -1,9 +1,8 @@
-const {Song} = require('../Tools/song.js');
-const { ytsearch } = require('../Tools/search.js')
-const ytpl = require('ytpl')
-const {play} = require('./basic_controlls.js')
-const { fetchSpotifyTrack } = require("../Tools/spotify_handler.cjs")
-const { SlashCommandBuilder } = require("discord.js")
+import {Song} from "../Tools/song.js";
+import { ytsearch } from "../Tools/search.js";
+import ytpl from 'ytpl';
+import { play } from "./basic_controlls.js";
+import { fetchSpotifyTrack } from "../Tools/spotify_handler.cjs";
 
 const add = {
     data: new SlashCommandBuilder()
