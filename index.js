@@ -45,4 +45,15 @@ client.on("messageCreate", async (message) => {
     command_table[command]?.(bottools.filter((e) => e.guild == message.guild)[0], message, args);
 });
 
+client.on("voiceStateUpdate", (oldState, newState) => {
+    if(oldState.channelId == newState.channelId) return;
+    if(oldState.channelId == null) return;
+    if(bottools.filter((e) => e.guild == oldState.guild)[0].connection == null) return;
+    console.log(oldState.channel.members.size);
+    if(oldState.channel.members.size == 1){
+        bottools.filter((e) => e.guild == newState.guild)[0].player.stop();
+        bottools.filter((e) => e.guild == newState.guild)[0].connection.destroy();
+    };
+});
+
 
