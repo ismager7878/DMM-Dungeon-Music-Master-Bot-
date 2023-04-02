@@ -4,7 +4,7 @@ import ytpl from 'ytpl';
 import { play } from "./basic_controlls.js";
 import { fetchSpotifyTrack } from "../Tools/spotify_handler.cjs";
 
-const add = {
+export const add = {
     data: new SlashCommandBuilder()
         .setName('add')
         .setDescription('/add <link>, /add <song name> add a song to the queue'),
@@ -36,7 +36,7 @@ const add = {
         });
     }
 }
-const queue = {
+export const queue = {
     data: new SlashCommandBuilder()
         .setName('queue')
         .setDescription('Show the queue'),
@@ -62,7 +62,7 @@ const skip = {
         bottools.player.play(bottools.playlist.shift().resource);
     }
 }
-const add_playlist = {
+export const add_playlist = {
     data: new SlashCommandBuilder()
         .setName('add_playlist')
         .setDescription('/add_playlist <link> add a playlist to the end of the queue'),
@@ -81,7 +81,7 @@ const add_playlist = {
         }
     }
 }
-const play_playlist = {
+export const play_playlist = {
     data: new SlashCommandBuilder()
         .setName('play_playlist')
         .setDescription('/play_playlist <link> play a playlist and add the rest to the start of queue'),
@@ -100,7 +100,7 @@ const play_playlist = {
         play(bottools, message, [bottools.playlist.shift().url]);
     }
 }
-const clear = {
+export const clear = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Clear the queue'),
@@ -111,7 +111,7 @@ const clear = {
 }
 
 
-const shuffle = {
+export const shuffle = {
     data: new SlashCommandBuilder()
         .setName('shuffle')
         .setDescription('Shuffle the queue'),

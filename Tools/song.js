@@ -1,7 +1,7 @@
 import ytdl from "ytdl-core";
 import { createAudioResource } from "@discordjs/voice";
 
-class Song {
+export class Song {
     constructor(url) {
       this.url = url;
     }
@@ -24,5 +24,4 @@ class Song {
       this.title = metadata.title;
       return metadata;}
 }
-module.exports = {Song};
 

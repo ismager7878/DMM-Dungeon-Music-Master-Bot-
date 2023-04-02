@@ -1,7 +1,7 @@
 import {pause, play, unpause, stop} from '../commands/basic_controlls.js'
-import {add, queue, skip, playPlaylist, addPlaylist, clear, shuffle} from '../commands/playlist.js';
+import {add, queue, skip, play_playlist, add_playlist, clear, shuffle} from '../commands/playlist.js';
 
-const command_table = [
+export const command_table = [
     pause,
     play,
     unpause,
@@ -14,4 +14,3 @@ const command_table = [
     clear,
     shuffle,
 ]
-module.exports = {command_table};

@@ -4,7 +4,7 @@ import {joinVoiceChannel} from '@discordjs/voice';
 import { ytsearch } from "../Tools/search.js";
 import { AudioPlayerStatus } from "@discordjs/voice";
 
-const pause = {
+export const pause = {
     data: new SlashCommandBuilder()
         .setName('pause')
         .setDescription('Pause song'),
@@ -12,7 +12,7 @@ const pause = {
         bottools.player.pause();
     },
 }
-const unpause = {
+export const unpause = {
     data: new SlashCommandBuilder()
         .setName('unpause')
         .setDescription('Unpause song'),
@@ -20,7 +20,7 @@ const unpause = {
         bottools.player.unpause();
     }
 }
-const stop = {
+export const stop = {
     data: new SlashCommandBuilder()
         .setName('stop')
         .setDescription('Stop song'),
@@ -29,7 +29,7 @@ const stop = {
         bottools.connection.destroy();
     }
 }
-const play = {
+export const play = {
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('/play, /play <link>, /play <song name> play a song from link, search or queue'),
@@ -77,4 +77,3 @@ const play = {
         });    
         }
 }
-module.exports = {play, stop, unpause, pause};
