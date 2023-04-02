@@ -1,6 +1,6 @@
-import { createAudioPlayer, AudioPlayerStatus } from "@discordjs/voice";
+const { createAudioPlayer, AudioPlayerStatus } = require("@discordjs/voice");
 
-export class BotTool{
+class BotTool{
     constructor(guild){
         this.playlist = [];
         this.connection = null;
@@ -12,3 +12,4 @@ export class BotTool{
         });
     }
 }
+module.exports = {BotTool}

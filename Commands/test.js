@@ -1,6 +1,6 @@
-import { SlashCommandBuilder } from "discord.js";
+const { SlashCommandBuilder } = require("discord.js");
 
-export default {
+const test = {
     data: new SlashCommandBuilder()
         .setName('ping')
         .setDescription('Replies with a pong to the user'),
@@ -8,3 +8,5 @@ export default {
         await interaction.reply('pong!');
     }
 }
+
+module.exports = {test}
