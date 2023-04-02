@@ -1,5 +1,5 @@
-import {pause, play, unpause, stop} from "../Commands/basic_controlls.js";
-import {add, queue, skip, playPlaylist, addPlaylist, clear, shuffle} from "../Commands/playlist.js";
+import {pause, play, unpause, stop} from '../commands/basic_controlls.js'
+import {add, queue, skip, playPlaylist, addPlaylist, clear, shuffle} from '../commands/playlist.js';
 
 export const command_table = {
     "play": play,//!play, !play <link>, !play <song name> play a song from link, search or queue

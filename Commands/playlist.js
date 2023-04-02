@@ -1,7 +1,7 @@
 import {Song} from "../Tools/song.js";
 import { ytsearch } from "../Tools/search.js";
 import ytpl from 'ytpl';
-import { play } from "./basic_controlls.js";
+import {play} from './basic_controlls.js'
 import { fetchSpotifyTrack } from "../Tools/spotify_handler.cjs";
 
 export const add = async (bottools, message, args) => {

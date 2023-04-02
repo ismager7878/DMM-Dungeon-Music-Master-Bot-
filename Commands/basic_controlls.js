@@ -1,7 +1,7 @@
 
-import {Song} from "../Tools/song.js";
+import {Song} from '../Tools/song.js';
 import {joinVoiceChannel} from '@discordjs/voice';
-import { ytsearch } from "../Tools/search.js";
+import { ytsearch } from '../Tools/search.js';
 import { AudioPlayerStatus } from "@discordjs/voice";
 
 export const pause = (bottools, message) => {
