@@ -24,41 +24,33 @@ export const add = {
             .setDescription('Add a playlist').addStringOption(
                 option => option.setName('playlist_url').setDescription('Url of the playlist').setRequired(true)
         )),
-    execute: async (bottools, message, args) => {
-
-        
-        if(!args[0]){
-            message.reply("Please tell me what you want to add with, !add <url> or !add <song name>");
-            return;
+    execute: async (message, bottools) => {
+        const subcommand = message.options.getSubcommand();
+        switch (subcommand) {
+            case 'url':
+                await message.deferReply({ ephemeral: true });
+                addSong(message, bottools, message.options.getString('url'));
+                break;
+            case 'song_name':
+                await message.deferReply({ ephemeral: true });
+                const url = await ytsearch(message.options.getString('songname'), message).catch(async (err) => {
+                    message.editReply("Song not found");
+                    return;
+                });
+                addSong(message, bottools, url);
+                break;
+            case 'playlist':
+                await message.deferReply({ ephemeral: true });
+                add_playlist(message, bottools, message.options.getString('playlist_url'));;
+                break;
         }
-    
-        let url = args[0];
-    
-        if(!url.startsWith("http")){
-            message.reply("Searching for song");
-            url = await ytsearch(args.join(" ")).catch((err) => {
-                message.reply("Song not found");
-                return;
-            });
-        }else if(args.length > 1){
-            message.reply("Please only song at the time");
-            return;
-        }
-    
-        const song = new Song(url);
-        await song.initSong().then(() => {
-            bottools.playlist.push(song);
-            message.reply(`${song.title} is added to the queue`);
-        }).catch((err) => {
-            message.reply("Song not found");
-        });
     }
 }
 export const queue = {
     data: new SlashCommandBuilder()
         .setName('queue')
         .setDescription('Show the queue'),
-    execute: async (bottools, message) => {
+    execute: async (message, bottools) => {
         if(bottools.playlist.length == 0){
             message.reply("No songs in queue, add some with !add <url> or !add <song name>");
             return;
@@ -70,7 +62,7 @@ export const skip = {
     data: new SlashCommandBuilder()
         .setName('skip')
         .setDescription('Skip current song'),
-    execute: async (bottools, message) => {
+    execute: async (message, bottools) => {
         if(bottools.playlist.length == 0){
             message.reply("No songs in queue, add some with !add <url> or !add <song name>");
             return;
@@ -81,13 +73,12 @@ export const skip = {
     }
 }
 export const add_playlist = async (message, bottools, args) => {
-    await message.deferReply({ ephemeral: true});
 
     if(!validate(args, message)) return;
 
     if(args.startsWith("https://open.spotify.com")){
-        const songlist = await fetchSpotifyTrack(args);
-        const playlist = await formatToPlaylist(songlist);
+        const songlist = await fetchSpotifyTrack(args, message);
+        const playlist = await formatToPlaylist(songlist, message);
         bottools.playlist.push(...playlist);
         await message.editReply(`Added ${playlist.length} songs to the queue`);
     }else{
@@ -103,7 +94,7 @@ export const play_playlist = async (message, bottools, args) => {
 
     if(args.startsWith("https://open.spotify.com")){
         const songlist = await fetchSpotifyTrack(args, message);
-        const playlist = await formatToPlaylist(songlist);
+        const playlist = await formatToPlaylist(songlist, message);
         bottools.playlist.unshift(...playlist);
     }else{
         const playlist = await createPlaylist(args, message)
@@ -117,7 +108,7 @@ export const clear = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Clear the queue'),
-    execute: async (bottools, message) => {
+    execute: async (message, bottools) => {
         bottools.playlist = [];
         message.reply("Cleared the queue");
     }
@@ -128,7 +119,7 @@ export const shuffle = {
     data: new SlashCommandBuilder()
         .setName('shuffle')
         .setDescription('Shuffle the queue'),
-    execute: async (bottools, message) => {
+    execute: async (message, bottools,) => {
         bottools.playlist = bottools.playlist.sort(() => Math.random() - 0.5);
         message.reply("Shuffled the queue");
     }
@@ -159,12 +150,24 @@ const createPlaylist = async (args, message) => {
     return songs;
 }
 
-const formatToPlaylist = async(songlist)=>{
+const formatToPlaylist = async(songlist, message)=>{
+    console.log(songlist)
     const playlist = await Promise.all(songlist.map(async(track)=>{
-        const url = await ytsearch(track);
+        console.log(track + 'track');
+        const url = await ytsearch(track, message);
         const song = new Song(url);
         await song.initSong();
         return song;
     }));
     return playlist;
+}
+
+const addSong = async (message, bottools, url) => {
+    const song = new Song(url);
+        await song.initSong().then(() => {
+            bottools.playlist.push(song);
+            message.editReply(`${song.title} is added to the queue`);
+        }).catch((err) => {
+            message.editReply("Song not found");
+        });
 }

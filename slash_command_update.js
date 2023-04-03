@@ -23,14 +23,6 @@ const rest = new REST({ version: '10' }).setToken(process.env.BotToken);
 			Routes.applicationCommands(process.env.AppId),
 			{ body: commands },
 		);
-        // rest.delete(Routes.applicationGuildCommand(process.env.AppId, process.env.TestGuidId, 'commandId'))
-	    //     .then(() => console.log('Successfully deleted guild command'))
-	    //     .catch(console.error);
-
-        // for global commands
-        rest.delete(Routes.applicationCommand(process.env.AppId, '1092215687830847586'))
-	        .then(() => console.log('Successfully deleted application command'))
-	        .catch(console.error);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {

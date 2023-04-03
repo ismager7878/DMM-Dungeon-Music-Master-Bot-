@@ -34,8 +34,9 @@ export const pause = {
     data: new SlashCommandBuilder()
         .setName('pause')
         .setDescription('Pause song'),
-    execute: async (message) => {
-        message.reply('Pong!');
+    execute: async (message, bottools) => {
+        bottools.player.pause();
+        message.reply('Song paused');
     },
 }
 export const unpause = {
@@ -113,7 +114,7 @@ export const play = {
 
 const searchPlay = async (args, message, bottools) => {
     await message.reply("Searching for song...",{ ephemeral: true});
-    const url = await ytsearch(args).catch(async (err) => {
+    const url = await ytsearch(args, message).catch(async (err) => {
         console.log(err);
         await message.reply("Song not found");
         return;
