@@ -11,7 +11,7 @@ export class Song {
             filter: "audioonly",
             fmt: "mp3",
             highWaterMark: 1 << 62,
-            liveBuffer: 1 << 62,
+            liveBuffer: 1 << 128,
             dlChunkSize: 0,
             bitrate: 128,
             quality: "highestaudio",

@@ -1,14 +1,32 @@
 import {Song} from "../Tools/song.js";
 import { ytsearch } from "../Tools/search.js";
 import ytpl from 'ytpl';
-import { play } from "./basic_controlls.js";
+import { queuePlay } from "./basic_controlls.js";
 import { fetchSpotifyTrack } from "../Tools/spotify_handler.cjs";
+import { SlashCommandBuilder } from "discord.js";
 
 export const add = {
     data: new SlashCommandBuilder()
         .setName('add')
-        .setDescription('/add <link>, /add <song name> add a song to the queue'),
+        .setDescription('Add a song to the queue')
+        .addSubcommand(subcommand =>
+            subcommand.setName('url')
+            .setDescription('Add a song with a url').addStringOption(
+                option => option.setName('url').setDescription('Url of the song').setRequired(true)
+        ))
+        .addSubcommand(subcommand =>
+            subcommand.setName('song_name')
+            .setDescription('Add a song with a songname').addStringOption(
+                option => option.setName('songname').setDescription('Name of the song').setRequired(true)
+        ))
+        .addSubcommand(subcommand =>
+            subcommand.setName('playlist')
+            .setDescription('Add a playlist').addStringOption(
+                option => option.setName('playlist_url').setDescription('Url of the playlist').setRequired(true)
+        )),
     execute: async (bottools, message, args) => {
+
+        
         if(!args[0]){
             message.reply("Please tell me what you want to add with, !add <url> or !add <song name>");
             return;
@@ -48,7 +66,7 @@ export const queue = {
         message.reply(bottools.playlist.map((song, index) => `${index + 1}: ${song.title}`).join('\n'));
     }
 }
-const skip = {
+export const skip = {
     data: new SlashCommandBuilder()
         .setName('skip')
         .setDescription('Skip current song'),
@@ -62,44 +80,39 @@ const skip = {
         bottools.player.play(bottools.playlist.shift().resource);
     }
 }
-export const add_playlist = {
-    data: new SlashCommandBuilder()
-        .setName('add_playlist')
-        .setDescription('/add_playlist <link> add a playlist to the end of the queue'),
-    execute: async (bottools, message, args) => {
-        if(!validate(args, message)) return;
+export const add_playlist = async (message, bottools, args) => {
+    await message.deferReply({ ephemeral: true});
 
-        if(args[0].startsWith("https://open.spotify.com")){
-            const songlist = await fetchSpotifyTrack(args[0]);
-            const playlist = await formatToPlaylist(songlist);
-            bottools.playlist.push(...playlist);
-            message.reply(`Added ${playlist.length} songs to the queue`);
-        }else{
-            const playlist = await createPlaylist(args, message);
-            bottools.playlist.push(...playlist);
-            message.reply(`Added ${playlist.length} songs to the queue`);
-        }
+    if(!validate(args, message)) return;
+
+    if(args.startsWith("https://open.spotify.com")){
+        const songlist = await fetchSpotifyTrack(args);
+        const playlist = await formatToPlaylist(songlist);
+        bottools.playlist.push(...playlist);
+        await message.editReply(`Added ${playlist.length} songs to the queue`);
+    }else{
+        const playlist = await createPlaylist(args, message);
+        bottools.playlist.push(...playlist);
+        await message.editReply(`Added ${playlist.length} songs to the queue`);
     }
 }
-export const play_playlist = {
-    data: new SlashCommandBuilder()
-        .setName('play_playlist')
-        .setDescription('/play_playlist <link> play a playlist and add the rest to the start of queue'),
-    execute: async (bottools, message, args) => {
-        if(!validate(args, message)) return;
+export const play_playlist = async (message, bottools, args) => {
+    await message.deferReply({ ephemeral: true});
 
-        if(args[0].startsWith("https://open.spotify.com")){
-            const songlist = await fetchSpotifyTrack(args[0]);
-            const playlist = await formatToPlaylist(songlist);
-            bottools.playlist.unshift(...playlist);
-        }else{
-            const playlist = await createPlaylist(args, message)
-            bottools.playlist.unshift(...playlist);
-        }
-    
-        play(bottools, message, [bottools.playlist.shift().url]);
+    if(!validate(args, message)) return;
+
+    if(args.startsWith("https://open.spotify.com")){
+        const songlist = await fetchSpotifyTrack(args, message);
+        const playlist = await formatToPlaylist(songlist);
+        bottools.playlist.unshift(...playlist);
+    }else{
+        const playlist = await createPlaylist(args, message)
+        console.log(playlist);
+        bottools.playlist.unshift(...playlist);
     }
+    queuePlay(message, bottools);
 }
+
 export const clear = {
     data: new SlashCommandBuilder()
         .setName('clear')
@@ -122,30 +135,21 @@ export const shuffle = {
 }
 
 const validate = (args, message) => {
-    if(!args[0]){
-        message.reply("Please link the playlist(or a song in the playlist) you want to add, with !addPlaylist <url> or !playPlaylist <url>");
-        return false;
-    }
-    if(!args[0].startsWith("http")){
-        message.reply("Please use a url to the playlist(or a song in it), it's not possible to search for a playlist");
+    if(!args.startsWith("http")){
+        message.editReply("Please use a url to the playlist(or a song in it), it's not possible to search for a playlist");
         return false;
     };
-    if(args.length > 1){
-        message.reply("Please only one playlist at the time");
-        return false;
-    };
-    if(args[0].includes("track")){
-        message.reply("Please use a playlist, not a song");
+    if(args.includes("track")){
+        message.editReply("Please use a playlist, not a song");
         return false;
     }
     return true;
 }
 
 const createPlaylist = async (args, message) => {
-    console.log(args);
-    const id = args[0].split("list=")[1];
+    const id = args.split("list=")[1];
     const playlist = await ytpl(id);
-    message.reply(`Loading ${playlist.items.length} songs from ${playlist.title}`);
+    message.editReply(`Loading ${playlist.items.length} songs from ${playlist.title}`);
     let songs = playlist.items.map(async (item) => {
         const song = new Song(item.url);
         await song.initSong();
@@ -153,7 +157,6 @@ const createPlaylist = async (args, message) => {
     });
     songs = await Promise.all(songs);
     return songs;
-
 }
 
 const formatToPlaylist = async(songlist)=>{
@@ -165,5 +168,3 @@ const formatToPlaylist = async(songlist)=>{
     }));
     return playlist;
 }
-
-module.exports = {add, queue, skip, play_playlist, add_playlist, clear, shuffle};

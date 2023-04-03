@@ -1,5 +1,5 @@
-import {pause, play, unpause, stop} from '../commands/basic_controlls.js'
-import {add, queue, skip, play_playlist, add_playlist, clear, shuffle} from '../commands/playlist.js';
+import {pause, play, unpause, stop, ping} from '../commands/basic_controlls.js'
+import {add, queue, skip, clear, shuffle} from '../commands/playlist.js';
 
 export const command_table = [
     pause,
@@ -9,8 +9,7 @@ export const command_table = [
     add,
     queue,
     skip,
-    play_playlist,
-    add_playlist,
     clear,
     shuffle,
+    ping,
 ]

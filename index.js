@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Collection, Client, GatewayIntentBits, Events } from 'discord.js';
 import dotenv from 'dotenv';
 import {command_table} from './Tools/command_table.js';
 import {BotTool} from './Tools/bottool.js';
@@ -19,21 +19,13 @@ const client = new Client({
     ]});
 
 client.commands = new Collection();
+const bottools = [];
 
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('js'))
-
-
-for (const file of command_table){
-    const filePath = path.join(commandsPath, file)
-    console.log(filePath);
-    const command = await import(filePath);
-    command.default();
-    console.log(command);
+for (const command of command_table){
     if('data' in command && 'execute' in command){
         client.commands.set(command.data.name, command); 
     }else {
-		console.log(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+		console.log(`The command is missing a required "data" or "execute" property.`);
 	}
 
 }
@@ -44,29 +36,35 @@ client.once("ready", () => {
 
 client.login(process.env.BotToken);
 
-client.on(Events.InteractionCreate, interaction => {
+client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
 
-    console.log(interaction);
-})
-
-client.on("messageCreate", async (message) => {  
-    if(!message.content.startsWith("!")) return;
-
-    if(!message.member.voice.channel){
-        message.reply("You need to be in a voice channel to use me:)");
+    if(interaction.member.voice.channel == null){
+        interaction.reply("You need to be in a voice channel to use me:)");
         return;
     }
 
-    if(!bottools.some((e) => e.guild == message.guild)){
-        bottools.push(new BotTool(message.guild));
+    if(!bottools.some((e) => e.guild == interaction.guild)){
+        bottools.push(new BotTool(interaction.guild));
     }
+    
+    const command = client.commands.get(interaction.commandName);
 
-    const command = message.content.split(' ')[0].substring(1);
-    const args = message.content.split(' ').slice(1);
-
-    command_table[command]?.(bottools.filter((e) => e.guild == message.guild)[0], message, args);
-});
+    if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
+    try {
+		await command.execute(interaction, bottools.filter((e) => e.guild == interaction.guild)[0]);
+	} catch (error) {
+		console.error(error);
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+		} else {
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
+	}
+})
 
 client.on("voiceStateUpdate", (oldState, newState) => {
 
