@@ -18,4 +18,11 @@ export class Database{
               });
         }
     }
+
+    static query = () => {
+        this.connection.query(sql, function (err, result) {
+            if (err) throw err;
+            console.log("Result: " + result);
+          });
+    }
 }

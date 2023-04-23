@@ -6,6 +6,7 @@ import {Database} from './database.js';
 
 dotenv.config();
 
+//botlogo url https://imgur.com/g8lAO6t
 
 const client = new Client({
     intents: [
