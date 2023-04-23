@@ -1,6 +1,6 @@
 import {pause, play, unpause, stop, ping} from '../commands/basic_controlls.js'
 import {add, queue, skip, clear, shuffle} from '../commands/playlist.js';
-import {check} from '../commands/data.js';
+import {check, help} from '../commands/data.js';
 export const command_table = [
     check,
     pause,
@@ -12,5 +12,5 @@ export const command_table = [
     skip,
     clear,
     shuffle,
-    ping,
+    help,
 ]
