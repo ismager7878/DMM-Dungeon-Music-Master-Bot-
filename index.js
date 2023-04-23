@@ -2,6 +2,7 @@ import { Collection, Client, GatewayIntentBits, Events } from 'discord.js';
 import dotenv from 'dotenv';
 import {command_table} from './Tools/command_table.js';
 import {BotTool} from './Tools/bottool.js';
+import {Database} from './database.js';
 
 dotenv.config();
 
