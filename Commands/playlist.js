@@ -152,7 +152,10 @@ const createPlaylist = async (args, message) => {
 
 const formatToPlaylist = async(songlist, message)=>{
     console.log(songlist)
+    let index = 0
     const playlist = await Promise.all(songlist.map(async(track)=>{
+        index++;
+        message.editReply(`${index} of ${songlist.length} songs loaded`)
         console.log(track + 'track');
         const url = await ytsearch(track, message);
         const song = new Song(url);

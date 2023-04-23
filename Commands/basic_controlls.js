@@ -99,7 +99,7 @@ export const play = {
                 urlPlay(message.options.getString('url'), message, bottools);
             break;
             case 'search':
-                searchPlay(message.options.getString('songname'), message, bottools);
+                searchPlay(message.options.getString('song_name'), message, bottools);
             break;
             case 'queue':
                 await message.deferReply({ ephemeral: true});
@@ -113,10 +113,11 @@ export const play = {
 };
 
 const searchPlay = async (args, message, bottools) => {
+    console.log(args);
     await message.reply("Searching for song...",{ ephemeral: true});
     const url = await ytsearch(args, message).catch(async (err) => {
         console.log(err);
-        await message.reply("Song not found");
+        await message.editReply("Song not found");
         return;
     })
     startSong(message, bottools, url);

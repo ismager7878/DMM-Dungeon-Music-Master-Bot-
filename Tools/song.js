@@ -14,7 +14,7 @@ export class Song {
             liveBuffer: 1 << 128,
             dlChunkSize: 0,
             bitrate: 128,
-            quality: "highestaudio",
+            quality: "lowestaudio",
         }));
         this.metadata = await this.getMetadata();
     }
