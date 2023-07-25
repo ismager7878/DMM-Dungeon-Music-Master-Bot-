@@ -19,7 +19,7 @@ export class Database{
         }
     }
 
-    static query = () => {
+    static query = (sql) => {
         this.connection.query(sql, function (err, result) {
             if (err) throw err;
             console.log("Result: " + result);
