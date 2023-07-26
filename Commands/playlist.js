@@ -159,7 +159,9 @@ const formatToPlaylist = async(songlist, message)=>{
         console.log(track + 'track');
         const url = await ytsearch(track, message);
         const song = new Song(url);
-        await song.initSong();
+        await song.initSong().catch((err)=>{
+            message.editReply("Song not found");
+        });
         return song;
     }));
     return playlist;

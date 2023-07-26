@@ -5,6 +5,7 @@ import { ytsearch } from "../Tools/search.js";
 import { AudioPlayerStatus } from "@discordjs/voice";
 import { SlashCommandBuilder } from "discord.js";
 import { add_playlist, play_playlist } from "./playlist.js";
+import { fetchSpotifyTrack } from "../Tools/spotify_handler.cjs";
 
 export const ping = {
     data: new SlashCommandBuilder()
@@ -125,6 +126,13 @@ const searchPlay = async (args, message, bottools) => {
 
 const urlPlay = async (url, message, bottools) => {
     await message.deferReply({ ephemeral: true});
+    if(url.startsWith("https://open.spotify.com")){
+        fetchSpotifyTrack(url).then(async (res) => {
+            searchPlay(res, message, bottools);
+        }).catch(async (err) => {
+            await message.editReply("Spotify song not found");
+        });
+    }
     startSong(message, bottools, url);
 }
 
