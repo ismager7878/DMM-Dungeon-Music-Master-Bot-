@@ -9,4 +9,10 @@ const fetchSpotifyTrack = async (url, message) => {
   const searchList = trackList.map((track) => `${track.title} ${track.subtitle}`);
   return searchList;
 }
-module.exports = { fetchSpotifyTrack };
+
+const newfetchSpotifyTrack = async (url) => {
+  const allData = await getData(url);
+  const trackList = allData.trackList;
+  return trackList;
+}
+module.exports = { fetchSpotifyTrack, newfetchSpotifyTrack };
